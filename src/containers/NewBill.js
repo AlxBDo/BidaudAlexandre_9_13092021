@@ -19,7 +19,9 @@ export default class NewBill {
     const file = this.document.querySelector(`input[data-testid="file"]`).files[0]
     const filePath = e.target.value.split(/\\/g)
     const fileName = filePath[filePath.length-1]
-    this.firestore
+    let extension = fileName.split(".").pop()
+    if(extension === "jpg" || extension === "jpeg" || extension === "png"){
+      this.firestore
       .storage
       .ref(`justificatifs/${fileName}`)
       .put(file)
@@ -28,6 +30,7 @@ export default class NewBill {
         this.fileUrl = url
         this.fileName = fileName
       })
+    } else { console.error("Le justificatif de la note de frais doit être aux formats jpg, jpeg ou png.") }
   }
   handleSubmit = e => {
     e.preventDefault()

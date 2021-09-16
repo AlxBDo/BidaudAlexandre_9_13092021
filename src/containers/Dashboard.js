@@ -27,28 +27,30 @@ export const filteredBills = (data, status) => {
 }
 
 export const card = (bill) => {
-  const firstAndLastNames = bill.email.split('@')[0]
-  const firstName = firstAndLastNames.includes('.') ?
-    firstAndLastNames.split('.')[0] : ''
-  const lastName = firstAndLastNames.includes('.') ?
-  firstAndLastNames.split('.')[1] : firstAndLastNames
+  if(bill.date && bill.date.length === 10){
+    const firstAndLastNames = bill.email.split('@')[0]
+    const firstName = firstAndLastNames.includes('.') ?
+      firstAndLastNames.split('.')[0] : ''
+    const lastName = firstAndLastNames.includes('.') ?
+    firstAndLastNames.split('.')[1] : firstAndLastNames
 
-  return (`
-    <div class='bill-card' id='open-bill${bill.id}' data-testid='open-bill${bill.id}'>
-      <div class='bill-card-name-container'>
-        <div class='bill-card-name'> ${firstName} ${lastName} </div>
-        <span class='bill-card-grey'> ... </span>
+    return (`
+      <div class='bill-card' id='open-bill${bill.id}' data-testid='open-bill${bill.id}'>
+        <div class='bill-card-name-container'>
+          <div class='bill-card-name'> ${firstName} ${lastName} </div>
+          <span class='bill-card-grey'> ... </span>
+        </div>
+        <div class='name-price-container'>
+          <span> ${bill.name} </span>
+          <span> ${bill.amount} € </span>
+        </div>
+        <div class='date-type-container'>
+          <span> ${formatDate(bill.date)} </span>
+          <span> ${bill.type} </span>
+        </div>
       </div>
-      <div class='name-price-container'>
-        <span> ${bill.name} </span>
-        <span> ${bill.amount} € </span>
-      </div>
-      <div class='date-type-container'>
-        <span> ${formatDate(bill.date)} </span>
-        <span> ${bill.type} </span>
-      </div>
-    </div>
-  `)
+    `)
+  }
 }
 
 export const cards = (bills) => {
@@ -131,6 +133,8 @@ export default class {
   }
 
   handleShowTickets(e, bills, index) {
+    console.log('INDEX : '+ index)
+    console.log("BILLS", bills)
     if (this.counter === undefined || this.index !== index) this.counter = 0
     if (this.index === undefined || this.index !== index) this.index = index
     if (this.counter % 2 === 0) {
