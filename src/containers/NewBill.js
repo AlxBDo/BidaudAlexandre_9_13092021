@@ -20,6 +20,7 @@ export default class NewBill {
     const filePath = e.target.value.split(/\\/g)
     const fileName = filePath[filePath.length-1]
     let extension = fileName.split(".").pop()
+    console.log("filename = ", file)
     if(extension === "jpg" || extension === "jpeg" || extension === "png"){
       this.firestore
       .storage
@@ -30,7 +31,10 @@ export default class NewBill {
         this.fileUrl = url
         this.fileName = fileName
       })
-    } else { console.error("Le justificatif de la note de frais doit être aux formats jpg, jpeg ou png.") }
+    } else { 
+      e.target.classList.add("error") 
+      console.error("Le justificatif de la note de frais doit être aux formats jpg, jpeg ou png.") 
+    }
   }
   handleSubmit = e => {
     e.preventDefault()

@@ -3,6 +3,7 @@
 */
 
 import { screen, getByTestId, fireEvent } from "@testing-library/dom"
+import userEvent from '@testing-library/user-event'
 import LoginUI from "../views/LoginUI"
 import Login from '../containers/Login.js'
 import BillsUI from "../views/BillsUI.js"
@@ -30,11 +31,30 @@ describe("Given I am connected as an employee", () => {
 
       const billsCont = new BillsContainer({document, onNavigate, firestore: null, localStorage: window.localStorage})
       
-       const html = BillsUI({ data: billsCont.getBills() })
+      const html = BillsUI({ data: billsCont.getBills() })
 
       document.body.innerHTML = html 
       
       expect(getByTestId(document.body, "icon-window").classList).toEqual("active-icon")
+
+    })
+
+    test("Then new bill button exist", () => {
+      Object.defineProperty(window, 'localStorage', { value: localStorageMock })
+      const user = JSON.stringify({
+        type: 'Employee',
+        status: "connected"
+      })
+      window.localStorage.setItem('user', user)
+
+      const onNavigate = (pathname) => {
+        document.body.innerHTML = ROUTES({ pathname })
+      }
+
+      const billsCont = new BillsContainer({document, onNavigate, firestore: null, localStorage: window.localStorage})
+      const html = BillsUI({ data: billsCont.getBills() })
+
+      expect(getByTestId(document.body, "btn-new-bill")).toBeTruthy()
 
     })
 
@@ -46,5 +66,68 @@ describe("Given I am connected as an employee", () => {
       const datesSorted = [...dates].sort(antiChrono)
       expect(dates).toEqual(datesSorted)
     })
+
+    describe(" and I click on New Bill button", () => {
+
+      test("Then New Bill form is displayed", () => {
+        Object.defineProperty(window, 'localStorage', { value: localStorageMock })
+        const user = JSON.stringify({
+          type: 'Employee',
+          status: "connected"
+        })
+
+        window.localStorage.setItem('user', user)
+
+        const onNavigate = (pathname) => {
+          document.body.innerHTML = ROUTES({ pathname })
+        }
+
+        const billsCont = new BillsContainer({document, onNavigate, firestore: null, localStorage: window.localStorage})
+
+        const handleClickNewBill = jest.fn((e) => billsCont.handleClickNewBill(e))
+        const btnNewBill = screen.getByTestId('btn-new-bill')
+        btnNewBill.addEventListener('click', handleClickNewBill)
+        userEvent.click(btnNewBill)
+
+        expect(handleClickNewBill).toHaveBeenCalled()
+        
+        expect(getByTestId(document.body, "form-new-bill")).toBeTruthy()
+
+      })
+
+    })
+
+    describe(" and I click on New Bill button", () => {
+
+      test("Then New Bill form is displayed", () => {
+        Object.defineProperty(window, 'localStorage', { value: localStorageMock })
+        const user = JSON.stringify({
+          type: 'Employee',
+          status: "connected"
+        })
+
+        window.localStorage.setItem('user', user)
+
+        const onNavigate = (pathname) => {
+          document.body.innerHTML = ROUTES({ pathname })
+        }
+
+        const billsCont = new BillsContainer({document, onNavigate, firestore: null, localStorage: window.localStorage})
+        const html = BillsUI({ data: bills })
+        document.body.innerHTML = html
+
+        const btnIconEye = document.querySelector('div[data-testid="icon-eye"]')
+        const handleClickIconEye = jest.fn((e) => billsCont.handleClickIconEye(btnIconEye))
+        btnIconEye.addEventListener('click', handleClickIconEye)
+        userEvent.click(btnIconEye)
+
+        expect(handleClickIconEye).toHaveBeenCalled()
+        
+        expect(document.body.classList).toBe("modal-body")
+
+      })
+
+    })
+
   })
 })

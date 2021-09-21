@@ -38,19 +38,29 @@ export default class {
       .then(snapshot => {
         const bills = snapshot.docs
           .map(doc => {
-            try {
-              return {
-                ...doc.data(),
-                date: formatDate(doc.data().date),
-                status: formatStatus(doc.data().status)
+            // check date format before return
+            if(doc.data().date.split("-")[0].length === 4 && doc.data().date.length === 10){
+              try {
+                return {
+                  ...doc.data(),
+                  date: formatDate(doc.data().date),
+                  status: formatStatus(doc.data().status)
+                }
+              } catch(e) {
+                // if for some reason, corrupted data was introduced, we manage here failing formatDate function
+                // log the error and return unformatted date in that case
+                console.log(e,'for',doc.data())
+                return {
+                  ...doc.data(),
+                  date: doc.data().date,
+                  status: formatStatus(doc.data().status)
+                }
               }
-            } catch(e) {
-              // if for some reason, corrupted data was introduced, we manage here failing formatDate function
-              // log the error and return unformatted date in that case
-              console.log(e,'for',doc.data())
+            } else {
+              console.error("Le format de la date de la note de frais n'est pas au bon format : YYYY-MM-DD.", doc.data())
               return {
                 ...doc.data(),
-                date: doc.data().date,
+                date: "9999-99-99",
                 status: formatStatus(doc.data().status)
               }
             }
