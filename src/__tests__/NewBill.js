@@ -9,6 +9,8 @@ import NewBill from "../containers/NewBill.js"
 import userEvent from '@testing-library/user-event'
 import { localStorageMock } from "../__mocks__/localStorage.js"
 import { ROUTES } from "../constants/routes"
+import Firestore from "../app/Firestore"
+import firebase from "../__mocks__/firebase"
 
 
 describe("Given I am connected as an employee", () => {
@@ -43,12 +45,12 @@ describe("Given I am connected as an employee", () => {
         const nwBi = new NewBill({
           document,
           onNavigate: null,
-          firestore: null, 
+          Firestore, 
           localStorage: window.localStorage
         })
 
         const fileInput = screen.getByTestId("file") 
-        const fileUpload = new File(['hello'], 'hello.txt', {type: 'text/plain'})
+        const fileUpload = new File(['hello'], 'hello.png', {type: 'image/png'})
 
         const handleChangeFile = jest.fn((e) => nwBi.handleChangeFile(e))
 
@@ -97,6 +99,22 @@ describe("Given I am connected as an employee", () => {
         expect(handleSubmit).toHaveBeenCalled()
         expect(screen.getAllByText('Mes notes de frais')).toBeTruthy()
       })
+    })
+  })
+})
+
+
+// Test d'integration POST
+describe("Given I am a user connected as Employee", () => {
+  describe("When I navigate to Bills page", () => {
+    test("fetches bill from mock API POST", async () => {
+      jest.mock('../app/Firestore')
+      const bill = {}
+      Firestore.bill = () => ({ bill, post: jest.fn().mockResolvedValue() })
+      const getSpy = jest.spyOn(Firestore, "bill")
+      const postReturn = Firestore.bill(bill)
+      expect(getSpy).toHaveBeenCalledTimes(1)
+      expect(postReturn.bill).toEqual(bill)
     })
   })
 })

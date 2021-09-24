@@ -7,6 +7,18 @@ import { fireEvent, screen } from "@testing-library/dom"
 import LoginUI from "../views/LoginUI"
 import Login from '../containers/Login.js'
 import { ROUTES } from "../constants/routes"
+import  { Firestore } from "../app/Firestore.js"
+
+// random creation of email
+const getRandomInteger = (maxNumber = 10) => { return Math.floor(Math.random() * maxNumber) }
+const letterArray = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o"]
+const getRandomString = (maxLength = false) => {
+  let stringRtrn = ""
+  if(!maxLength){ maxLength = getRandomInteger() }
+  for(let i = 0 ; i <= maxLength; i++){ stringRtrn += letterArray[ getRandomInteger(letterArray.length) ] }
+  return stringRtrn
+}
+const getRandomEmail = () => { return getRandomString() + "@" + getRandomString(5) + "." + getRandomString(2) }
 
 describe("Given that I am a user on login page", () => {
   describe("When I do not fill fields and I click on employee button Login In", () => {
@@ -93,10 +105,12 @@ describe("Given that I am a user on login page", () => {
         firebase
       })
 
-      const handleSubmit = jest.fn(login.handleSubmitEmployee)    
+      const handleSubmit = jest.fn(login.handleSubmitEmployee)
+      const createUser = jest.fn(login.createUser)        
       form.addEventListener("submit", handleSubmit)
       fireEvent.submit(form)
       expect(handleSubmit).toHaveBeenCalled()
+      expect(createUser).not.toBeCalled()
       expect(window.localStorage.setItem).toHaveBeenCalled()
       expect(window.localStorage.setItem).toHaveBeenCalledWith(
         "user",
@@ -111,6 +125,46 @@ describe("Given that I am a user on login page", () => {
 
     test("It should renders Bills page", () => {
       expect(screen.getAllByText('Mes notes de frais')).toBeTruthy()
+    })
+
+    test("Then a new Employee is created in app", () => {
+
+      document.body.innerHTML = LoginUI()
+
+      const user = {
+        type: "Employee",
+        email: getRandomEmail(),
+        password: "azerty",
+        status: "connected"
+      }
+
+      const onNavigate = (pathname) => {
+        document.body.innerHTML = ROUTES({ pathname })
+      }
+
+      let PREVIOUS_LOCATION = ''
+
+      const login = new Login({
+        document,
+        localStorage: window.localStorage,
+        onNavigate,
+        PREVIOUS_LOCATION,
+        Firestore
+      })
+
+      const userExist = jest.fn(login.checkIfUserExists)
+
+      expect(userExist(user)).toBe(null)
+
+      expect(userExist).toHaveBeenCalledWith(
+        {
+          type: "Employee",
+          email: user.email,
+          password: user.password,
+          status: "connected"
+        }
+      )
+      
     })
 
   })

@@ -20,7 +20,7 @@ export default class NewBill {
     const filePath = e.target.value.split(/\\/g)
     const fileName = filePath[filePath.length-1]
     let extension = fileName.split(".").pop()
-    console.log("filename = ", file)
+    console.log("filename = ", extension)
     if(extension === "jpg" || extension === "jpeg" || extension === "png"){
       this.firestore
       .storage
@@ -58,6 +58,7 @@ export default class NewBill {
   }
 
   // not need to cover this function by tests
+  /* istanbul ignore next */
   createBill = (bill) => {
     if (this.firestore) {
       this.firestore
