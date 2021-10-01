@@ -10,7 +10,6 @@ import userEvent from '@testing-library/user-event'
 import { localStorageMock } from "../__mocks__/localStorage.js"
 import { ROUTES } from "../constants/routes"
 import Firestore from "../app/Firestore"
-import firebase from "../__mocks__/firebase"
 
 
 describe("Given I am connected as an employee", () => {
@@ -107,9 +106,22 @@ describe("Given I am connected as an employee", () => {
 // Test d'integration POST
 describe("Given I am a user connected as Employee", () => {
   describe("When I navigate to Bills page", () => {
-    test("fetches bill from mock API POST", async () => {
+    test("fetches new bill from mock API POST", async () => {
       jest.mock('../app/Firestore')
-      const bill = {}
+      const email = "cedric.hiely@billed.com"
+      const bill = {
+        email,
+        type: "Employee",
+        name:  "Test 2 test",
+        amount: 100,
+        date:  "2021/10/04",
+        vat: 20,
+        pct: 20,
+        commentary: "Mon test de jest est un succès",
+        fileUrl: "chemin/demon/fichier",
+        fileName: "monjustif.jpeg",
+        status: 'pending'
+      }
       Firestore.bill = () => ({ bill, post: jest.fn().mockResolvedValue() })
       const getSpy = jest.spyOn(Firestore, "bill")
       const postReturn = Firestore.bill(bill)
