@@ -75,7 +75,6 @@ describe("Given I am connected as an employee", () => {
     })
 
     describe(" and I click New Bill button", () => {
-
       test("Then New Bill form is displayed", () => {
         Object.defineProperty(window, 'localStorage', { value: localStorageMock })
         const user = JSON.stringify({
@@ -105,7 +104,6 @@ describe("Given I am connected as an employee", () => {
     })
 
     describe(" and I click an IconEye", () => {
-
       test("Then modalFile is opened", () => {
 
         document.body.innerHTML = BillsUI({ data: bills })

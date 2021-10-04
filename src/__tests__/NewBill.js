@@ -49,7 +49,7 @@ describe("Given I am connected as an employee", () => {
         })
 
         const fileInput = screen.getByTestId("file") 
-        const fileUpload = new File(['hello'], 'hello.png', {type: 'image/png'})
+        const fileUpload = new File(['hello'], 'hello.txt', {type: 'text/plain'})
 
         const handleChangeFile = jest.fn((e) => nwBi.handleChangeFile(e))
 

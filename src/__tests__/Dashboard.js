@@ -199,6 +199,8 @@ describe('Given I am connected as Admin and I am on Dashboard page and I clicked
 
       const modale = screen.getByTestId('modaleFileAdmin')
       expect(modale).toBeTruthy()
+      expect(document.getElementById("file-name-admin").innerHTML).toBe("preview-facture-free-201801-pdf-1.jpg")
+      expect(eye.getAttribute("data-bill-url")).toBe(document.querySelector(".modal-body div img").getAttribute("src"))
       
     })
   })
